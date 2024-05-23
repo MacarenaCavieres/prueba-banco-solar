@@ -133,40 +133,26 @@
                         ></button>
                     </div>
                     <div class="modal-body">
-                        <form class="p-3 border rounded" id="formEdit">
-                            <label class="form-label" for="first_name">Ingrese su nombre</label>
-                            <input
-                                class="form-control"
-                                type="text"
-                                name="first_name"
-                                placeholder="Nombre"
-                                required
-                            />
-                            <label class="form-label mt-2" for="last_name">Ingrese su apellido</label>
-                            <input
-                                class="form-control"
-                                type="text"
-                                name="last_name"
-                                placeholder="Apellido"
-                                required
-                            />
-                            <label class="form-label mt-2" for="email">Ingrese su mail</label>
-                            <input
-                                class="form-control"
-                                type="email"
-                                name="email"
-                                placeholder="Mail"
-                                disabled
-                            />
-                            <label class="form-label mt-2" for="saldo">Ingrese su saldo</label>
-                            <input
-                                class="form-control"
-                                type="number"
-                                name="saldo"
-                                placeholder="Saldo"
-                                required
-                            />
-                            <button type="submit" class="btn btn-warning mt-3">Editar</button>
+                        <form id="formEdit">
+                            <div class="form-group text-center">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <label class="form-label" for="nombre">Nombre:</label>
+                                    <input
+                                        class="form-control d-inline mx-3"
+                                        type="text"
+                                        name="nombre"
+                                        required
+                                    />
+                                    <label class="form-label" for="balance">Balance:</label>
+                                    <input
+                                        class="form-control d-inline mx-3"
+                                        type="number"
+                                        name="balance"
+                                        required
+                                    />
+                                    <button type="submit" class="btn btn-warning">Editar</button>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>

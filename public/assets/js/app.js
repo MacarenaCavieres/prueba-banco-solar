@@ -172,18 +172,21 @@ const printUsers = (data) => {
 
         btnEdit.classList.add("btn", "btn-warning", "btn-editar", "me-2");
         btnDelete.classList.add("btn", "btn-danger", "btn-eliminar");
+        btnDelete.dataset.id = item.id;
 
         btnDelete.addEventListener("click", (e) => {
             if (confirm("¿Seguro quieres eliminar este usuario?")) {
-                removeOne(e.target.dataset.email);
+                removeOne(e.target.dataset.id);
             }
         });
 
         btnEdit.addEventListener("click", (e) => {
             myModal.show();
 
-            formEdit.first_name.value = item.first_name;
-            formEdit.saldo.value = item.saldo;
+            formEdit.nombre.value = item.nombre;
+            formEdit.balance.value = item.balance;
+
+            formEdit.dataset.id = item.id;
         });
 
         tdbtnes.appendChild(btnEdit);
@@ -233,46 +236,46 @@ formUser.addEventListener("submit", async (e) => {
 //     }
 // });
 
-// const removeOne = async (email) => {
-//     try {
-//         await axios.delete(url + `/usuarios/${email}`);
-//         getUsers();
-//         alert("Usuario eliminado");
-//     } catch (error) {
-//         console.error("Error front===> ", error);
-//         return alert("Ups... algo salio mal");
-//     }
-// };
+const removeOne = async (id) => {
+    try {
+        await axios.delete(url + `/usuarios/${id}`);
+        getUsers();
+        alert("Usuario eliminado");
+    } catch (error) {
+        console.error("Error front===> ", error);
+        return alert("Ups... algo salio mal");
+    }
+};
 
-// formEdit.addEventListener("submit", (e) => {
-//     e.preventDefault();
-//     updateOne(formEdit.dataset.email);
-// });
+formEdit.addEventListener("submit", (e) => {
+    e.preventDefault();
+    updateOne(formEdit.dataset.email);
+});
 
-// const updateOne = async (email) => {
-//     try {
-//         const first_name = formEdit.first_name.value;
-//         const last_name = formEdit.last_name.value;
-//         const email_user = formEdit.email.value;
-//         const saldo = formEdit.saldo.value;
+const updateOne = async (email) => {
+    try {
+        const first_name = formEdit.first_name.value;
+        const last_name = formEdit.last_name.value;
+        const email_user = formEdit.email.value;
+        const saldo = formEdit.saldo.value;
 
-//         if (!first_name || !last_name || !email_user || !saldo) return alert("Todos los campos obligatorios");
+        if (!first_name || !last_name || !email_user || !saldo) return alert("Todos los campos obligatorios");
 
-//         const { data } = await axios.put(url + `/usuarios/${email}`, {
-//             first_name,
-//             last_name,
-//             email: email_user,
-//             saldo,
-//         });
+        const { data } = await axios.put(url + `/usuarios/${email}`, {
+            first_name,
+            last_name,
+            email: email_user,
+            saldo,
+        });
 
-//         printUsers(data);
-//         myModal.hide();
-//         alert("Usuario editado");
-//     } catch (error) {
-//         console.error("Error front===> ", error);
-//         return alert("Ups... algo salio mal");
-//     }
-// };
+        printUsers(data);
+        myModal.hide();
+        alert("Usuario editado");
+    } catch (error) {
+        console.error("Error front===> ", error);
+        return alert("Ups... algo salio mal");
+    }
+};
 
 getUsers();
 
