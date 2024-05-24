@@ -45,7 +45,7 @@ const putOne = async (nombre, balance, id) => {
     };
 
     const { rows } = await pool.query(query);
-    return rows[0];
+    return rows;
 };
 
 export const User = {

@@ -94,8 +94,8 @@
 //               </tr>
 //          `);
 
-//             $("#emisor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
-//             $("#receptor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
+// $("#emisor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
+// $("#receptor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
 //         });
 //     };
 
@@ -106,31 +106,31 @@
 //         getUsuarios();
 //     };
 
-//     const getTransferencias = async () => {
-//         const { data } = await axios.get("http://localhost:3000/api/v1/transferencias");
-//         $(".transferencias").html("");
+// const getTransferencias = async () => {
+//     const { data } = await axios.get("http://localhost:3000/api/v1/transferencias");
+//     $(".transferencias").html("");
 
-//         data.forEach((t) => {
-//             $(".transferencias").append(`
-//        <tr>
-//          <td> ${formatDate(t[4])} </td>
-//          <td> ${t[1]} </td>
-//          <td> ${t[2]} </td>
-//          <td> ${t[3]} </td>
-//        </tr>
-//      `);
-//         });
-//     };
+//     data.forEach((t) => {
+//         $(".transferencias").append(`
+//    <tr>
+//      <td> ${formatDate(t[4])} </td>
+//      <td> ${t[1]} </td>
+//      <td> ${t[2]} </td>
+//      <td> ${t[3]} </td>
+//    </tr>
+//  `);
+//     });
+// };
 
-//     getUsuarios();
-//     // getTransferencias();
+// getUsuarios();
+// // getTransferencias();
 
-//     const formatDate = (date) => {
-//         const dateFormat = moment(date).format("L");
-//         const timeFormat = moment(date).format("LTS");
-//         return `${dateFormat} ${timeFormat}`;
-//     };
-//     formatDate();
+// const formatDate = (date) => {
+//     const dateFormat = moment(date).format("L");
+//     const timeFormat = moment(date).format("LTS");
+//     return `${dateFormat} ${timeFormat}`;
+// };
+// formatDate();
 // });
 
 const url = "/api/v1";
@@ -139,6 +139,8 @@ const tBodyTrans = document.querySelector("#tBodyTrans");
 const formUser = document.querySelector("#formUser");
 const formEdit = document.querySelector("#formEdit");
 const formTrans = document.querySelector("#formTrans");
+const emisor = document.querySelector("#emisor");
+const receptor = document.querySelector("#receptor");
 
 const myModal = new bootstrap.Modal(document.getElementById("modal"));
 
@@ -155,6 +157,8 @@ const getUsers = async () => {
 
 const printUsers = (data) => {
     tBody.textContent = "";
+    emisor.textContent = "";
+    receptor.textContent = "";
 
     data.forEach((item) => {
         const tr = document.createElement("tr");
@@ -163,6 +167,8 @@ const printUsers = (data) => {
         const tdbtnes = document.createElement("td");
         const btnEdit = document.createElement("button");
         const btnDelete = document.createElement("button");
+        const optionEm = document.createElement("option");
+        const optionRep = document.createElement("option");
 
         tdName.textContent = item.nombre;
         tdBalance.textContent = item.balance;
@@ -188,6 +194,16 @@ const printUsers = (data) => {
 
             formEdit.dataset.id = item.id;
         });
+
+        optionEm.value = item.nombre;
+        optionRep.value = item.nombre;
+        optionEm.textContent = item.nombre;
+        optionRep.textContent = item.nombre;
+
+        optionEm.dataset.id = item.id;
+
+        emisor.append(optionEm);
+        receptor.append(optionRep);
 
         tdbtnes.appendChild(btnEdit);
         tdbtnes.appendChild(btnDelete);
@@ -220,22 +236,6 @@ formUser.addEventListener("submit", async (e) => {
     }
 });
 
-// formOne.addEventListener("submit", async (e) => {
-//     e.preventDefault();
-
-//     const email = e.target.email.value;
-//     if (!email) return alert("Campo obligatorio");
-
-//     try {
-//         const { data } = await axios.get(url + `/usuarios/${email}`);
-
-//         printUsers(data);
-//     } catch (error) {
-//         console.error("Error front===> ", error);
-//         return alert("Ups... algo salio mal");
-//     }
-// });
-
 const removeOne = async (id) => {
     try {
         await axios.delete(url + `/usuarios/${id}`);
@@ -249,26 +249,22 @@ const removeOne = async (id) => {
 
 formEdit.addEventListener("submit", (e) => {
     e.preventDefault();
-    updateOne(formEdit.dataset.email);
+    updateOne(formEdit.dataset.id);
 });
 
-const updateOne = async (email) => {
+const updateOne = async (id) => {
     try {
-        const first_name = formEdit.first_name.value;
-        const last_name = formEdit.last_name.value;
-        const email_user = formEdit.email.value;
-        const saldo = formEdit.saldo.value;
+        const nombre = formEdit.nombre.value;
+        const balance = formEdit.balance.value;
 
-        if (!first_name || !last_name || !email_user || !saldo) return alert("Todos los campos obligatorios");
+        if (!nombre.trim() || !balance.trim()) return alert("Todos los campos obligatorios");
 
-        const { data } = await axios.put(url + `/usuarios/${email}`, {
-            first_name,
-            last_name,
-            email: email_user,
-            saldo,
+        const { data } = await axios.put(url + `/usuarios/${id}`, {
+            nombre,
+            balance,
         });
 
-        printUsers(data);
+        getUsers(data);
         myModal.hide();
         alert("Usuario editado");
     } catch (error) {
@@ -281,39 +277,47 @@ getUsers();
 
 // -----------------------transacciones-----------------------
 
-// const getTrans = async () => {
-//     try {
-//         const { data } = await axios.get(url + "/transacciones");
-//         printTrans(data);
-//     } catch (error) {
-//         console.error("Error front===> ", error);
-//         return alert("Ups... algo salio mal");
-//     }
-// };
+const getTrans = async () => {
+    try {
+        const { data } = await axios.get(url + "/transferencias");
+        printTrans(data);
+    } catch (error) {
+        console.error("Error front===> ", error);
+        return alert("Ups... algo salio mal");
+    }
+};
 
-// const printTrans = (data) => {
-//     tBodyTrans.textContent = "";
+const printTrans = (data) => {
+    tBodyTrans.textContent = "";
 
-//     data.forEach((item) => {
-//         const tr = document.createElement("tr");
-//         const tdID = document.createElement("td");
-//         const tdOrigin = document.createElement("td");
-//         const tdAmount = document.createElement("td");
-//         const tdDestination = document.createElement("td");
+    data.forEach((item) => {
+        const tr = document.createElement("tr");
+        const tdDate = document.createElement("td");
+        const tdOrigin = document.createElement("td");
+        const tdAmount = document.createElement("td");
+        const tdDestination = document.createElement("td");
 
-//         tdID.textContent = item.id;
-//         tdOrigin.textContent = item.email_origen;
-//         tdAmount.textContent = item.monto_transferencia;
-//         tdDestination.textContent = item.email_destino;
+        const date = item.fecha;
 
-//         tr.appendChild(tdID);
-//         tr.appendChild(tdOrigin);
-//         tr.appendChild(tdAmount);
-//         tr.appendChild(tdDestination);
+        tdDate.textContent = formatDate(date);
+        tdOrigin.textContent = item.emisor;
+        tdDestination.textContent = item.receptor;
+        tdAmount.textContent = item.monto;
 
-//         tBodyTrans.appendChild(tr);
-//     });
-// };
+        tr.appendChild(tdDate);
+        tr.appendChild(tdOrigin);
+        tr.appendChild(tdDestination);
+        tr.appendChild(tdAmount);
+
+        tBodyTrans.appendChild(tr);
+    });
+};
+const formatDate = (date) => {
+    const dateFormat = moment(date).format("L");
+    const timeFormat = moment(date).format("LTS");
+    return `${dateFormat} ${timeFormat}`;
+};
+formatDate();
 
 // formTrans.addEventListener("submit", async (e) => {
 //     e.preventDefault();
@@ -339,21 +343,4 @@ getUsers();
 //     }
 // });
 
-// formOneTrans.addEventListener("submit", async (e) => {
-//     e.preventDefault();
-
-//     const email = e.target.email.value;
-
-//     if (!email.trim()) return alert("Campo obligatorio");
-
-//     try {
-//         const { data } = await axios.get(url + `/transacciones/${email}`);
-
-//         printTrans(data);
-//     } catch (error) {
-//         console.error("Error front===> ", error);
-//         return alert("Ups... algo salio mal");
-//     }
-// });
-
-// getTrans();
+getTrans();
