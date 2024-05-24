@@ -144,9 +144,15 @@ const receptor = document.querySelector("#receptor");
 
 const myModal = new bootstrap.Modal(document.getElementById("modal"));
 
+let usersDict = {};
+
 const getUsers = async () => {
     try {
         const { data } = await axios.get(url + "/usuarios");
+        usersDict = data.reduce((acc, user) => {
+            acc[user.id] = user.nombre;
+            return acc;
+        }, {});
 
         printUsers(data);
     } catch (error) {
@@ -201,6 +207,7 @@ const printUsers = (data) => {
         optionRep.textContent = item.nombre;
 
         optionEm.dataset.id = item.id;
+        optionRep.dataset.id = item.id;
 
         emisor.append(optionEm);
         receptor.append(optionRep);
@@ -300,8 +307,8 @@ const printTrans = (data) => {
         const date = item.fecha;
 
         tdDate.textContent = formatDate(date);
-        tdOrigin.textContent = item.emisor;
-        tdDestination.textContent = item.receptor;
+        tdOrigin.textContent = usersDict[item.emisor] || item.emisor;
+        tdDestination.textContent = usersDict[item.receptor] || item.receptor;
         tdAmount.textContent = item.monto;
 
         tr.appendChild(tdDate);
@@ -319,28 +326,28 @@ const formatDate = (date) => {
 };
 formatDate();
 
-// formTrans.addEventListener("submit", async (e) => {
-//     e.preventDefault();
+formTrans.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-//     const email_origen = e.target.email_origen.value;
-//     const monto_transferencia = e.target.monto_transferencia.value;
-//     const email_destino = e.target.email_destino.value;
+    const emisor = e.target.emisor.options[e.target.emisor.selectedIndex].dataset.id;
+    const receptor = e.target.receptor.options[e.target.receptor.selectedIndex].dataset.id;
+    const monto = e.target.monto.value;
 
-//     if (!email_origen.trim() || !monto_transferencia.trim() || !email_destino.trim())
-//         return alert("Todos los campos obligatorios");
+    if (!emisor || !receptor || !monto.trim()) return alert("Todos los campos obligatorios");
 
-//     try {
-//         await axios.post(url + "/transacciones", {
-//             email_origen,
-//             monto_transferencia,
-//             email_destino,
-//         });
+    try {
+        await axios.post(url + "/transferencias", {
+            emisor,
+            receptor,
+            monto,
+        });
 
-//         getTrans();
-//     } catch (error) {
-//         console.error("Error front===> ", error);
-//         return alert("Ups... algo salio mal");
-//     }
-// });
+        getTrans();
+        getUsers();
+    } catch (error) {
+        console.error("Error front===> ", error);
+        return alert("Ups... algo salio mal");
+    }
+});
 
 getTrans();
